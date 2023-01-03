@@ -53,6 +53,11 @@ COPY /docker/8.1/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY /docker/8.1/php.ini /etc/php/8.1/cli/conf.d/99-sail.ini
 RUN chmod +x /usr/local/bin/start-container
 
-EXPOSE 8080
+# https://cloud.google.com/run/docs/quickstarts/build-and-deploy/deploy-php-service
+# Use the PORT environment variable in Apache configuration files.
+# https://cloud.google.com/run/docs/reference/container-contract#port
+RUN sed -i 's/80/${PORT}/g' /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
+
+EXPOSE $PORT
 
 ENTRYPOINT ["start-container"]
