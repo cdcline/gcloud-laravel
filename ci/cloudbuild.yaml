@@ -1,0 +1,5 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/ultra-climber-373317/github.com/cdcline/gcloud-laravel-docker:$COMMIT_SHA', '-f', 'docker/8.1/Dockerfile', '.']
+  env:
+  - 'WWWGROUP=1000'
