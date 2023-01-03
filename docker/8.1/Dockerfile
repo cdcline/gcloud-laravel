@@ -2,7 +2,7 @@ FROM ubuntu:22.04
 
 LABEL maintainer="Taylor Otwell"
 
-ARG WWWGROUP=1000
+ARG WWWGROUP
 ARG NODE_VERSION=18
 ARG POSTGRES_VERSION=14
 
@@ -48,16 +48,11 @@ RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.1
 RUN groupadd --force -g $WWWGROUP sail
 RUN useradd -ms /bin/bash --no-user-group -g $WWWGROUP -u 1337 sail
 
-COPY /docker/8.1/start-container /usr/local/bin/start-container
-COPY /docker/8.1/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY /docker/8.1/php.ini /etc/php/8.1/cli/conf.d/99-sail.ini
+COPY start-container /usr/local/bin/start-container
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY php.ini /etc/php/8.1/cli/conf.d/99-sail.ini
 RUN chmod +x /usr/local/bin/start-container
 
-# https://cloud.google.com/run/docs/quickstarts/build-and-deploy/deploy-php-service
-# Use the PORT environment variable in Apache configuration files.
-# https://cloud.google.com/run/docs/reference/container-contract#port
-RUN sed -i 's/80/${PORT}/g' /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
-
-EXPOSE $PORT
+EXPOSE 8000
 
 ENTRYPOINT ["start-container"]
